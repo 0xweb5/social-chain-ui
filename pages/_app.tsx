@@ -1,6 +1,5 @@
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
-import { assets, chains } from 'chain-registry';
 import { defaultTheme, WalletProvider } from '@cosmos-kit/react';
 import { ChakraProvider } from '@chakra-ui/react';
 import { SignerOptions } from '@cosmos-kit/core';
@@ -10,9 +9,10 @@ import { wallets as leapWallets } from '@cosmos-kit/leap';
 import { GasPrice } from '@cosmjs/stargate';
 import { Chain } from '@chain-registry/types';
 
-import { aminoTypes, registry } from '../config/defaults';
+import { aminoTypes, assetLists, chainList, registry } from '../config/defaults';
 
 function CreateCosmosApp({ Component, pageProps }: AppProps) {
+  
   const signerOptions: SignerOptions = {
     signingStargate: (_chain: Chain) => {
       return {
@@ -27,6 +27,10 @@ function CreateCosmosApp({ Component, pageProps }: AppProps) {
           return {
             gasPrice: GasPrice.fromString('0.0025uosmo'),
           };
+        case 'localosmosis':
+          return {
+            gasPrice: GasPrice.fromString('0.0025token'),
+          };
       }
     },
   };
@@ -34,9 +38,9 @@ function CreateCosmosApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={defaultTheme}>
       <WalletProvider
-        chains={chains}
-        assetLists={assets}
-        wallets={[...keplrWallets, ...cosmostationWallets, ...leapWallets]}
+        chains={chainList}
+        assetLists={assetLists}
+        wallets={[...keplrWallets, ...cosmostationWallets, ...leapWallets ]}
         signerOptions={signerOptions}
       >
         <Component {...pageProps} />
