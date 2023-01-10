@@ -134,6 +134,18 @@
     "@chakra-ui/react-use-merge-refs" "2.0.3"
     "@chakra-ui/transition" "2.0.9"
 
+"@chakra-ui/accordion@2.0.4":
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/accordion/-/accordion-2.0.4.tgz#23a59ad613bf00252f3350b5fde2e37c5d17c039"
+  integrity sha512-mVhjGGVhMuTgrle34XrWM4jgqgxTU0RIz3Jx8xCYVi4B3YwUdMAECnnXsysWDASXsmqgTfGPvLS2RjpM30d4xA==
+  dependencies:
+    "@chakra-ui/descendant" "3.0.3"
+    "@chakra-ui/hooks" "2.0.2"
+    "@chakra-ui/icon" "3.0.2"
+    "@chakra-ui/react-utils" "2.0.1"
+    "@chakra-ui/transition" "2.0.2"
+    "@chakra-ui/utils" "2.0.2"
+
 "@chakra-ui/accordion@2.1.4":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@chakra-ui/accordion/-/accordion-2.1.4.tgz#a3eca38f8e52d5a5f4b9528fb9d269dcdcb035ac"
@@ -496,6 +508,13 @@
     "@chakra-ui/react-context" "2.0.6"
     "@chakra-ui/react-use-merge-refs" "2.0.6"
 
+"@chakra-ui/descendant@3.0.3":
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/descendant/-/descendant-3.0.3.tgz#9c9b356d04bfdaf6f6d7040576884945b23c5c69"
+  integrity sha512-uI0B5BO7khb22UWE42W7n3oGjxQkdJl+H5lhX58lAOAjbNsbmd8XbIVXTO/Kb7LvS3sPimkyG8nRC9A1epq4tw==
+  dependencies:
+    "@chakra-ui/react-utils" "^2.0.1"
+
 "@chakra-ui/descendant@3.0.8":
   version "3.0.8"
   resolved "https://registry.yarnpkg.com/@chakra-ui/descendant/-/descendant-3.0.8.tgz#ffb57219f78fddb49f13e8e23066aa339f91bf47"
@@ -633,6 +652,16 @@
     "@chakra-ui/react-types" "2.0.3"
     "@chakra-ui/react-use-merge-refs" "2.0.3"
 
+"@chakra-ui/hooks@2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/hooks/-/hooks-2.0.2.tgz#6153f33957f23b8f156b7ce4ce1605f89e67c1b5"
+  integrity sha512-3B4zsl51tevmO6T6xUKcclwxf4FClKtScaNvb8jMmVczTGRL7WhZ6LxXeYUJMms11C8W9uZczE5yXSP0qweeAw==
+  dependencies:
+    "@chakra-ui/react-utils" "2.0.1"
+    "@chakra-ui/utils" "2.0.2"
+    compute-scroll-into-view "1.0.14"
+    copy-to-clipboard "3.3.1"
+
 "@chakra-ui/hooks@2.0.9":
   version "2.0.9"
   resolved "https://registry.yarnpkg.com/@chakra-ui/hooks/-/hooks-2.0.9.tgz#1f6d6157968a60dd9678112763d8f5fd3bdeffad"
@@ -677,6 +706,13 @@
   dependencies:
     "@chakra-ui/shared-utils" "2.0.4"
 
+"@chakra-ui/icon@3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/icon/-/icon-3.0.2.tgz#e8b380981690a543382f56f9d184f6b28f4b3d83"
+  integrity sha512-sas37byldn5O/TTIKHzxHBujEYqVPXegisoMqutLtF60fpXnb62aG1JTyorXSG3zJxJWQW7+AvjbOGyWKHXc0Q==
+  dependencies:
+    "@chakra-ui/utils" "2.0.2"
+
 "@chakra-ui/icon@3.0.9":
   version "3.0.9"
   resolved "https://registry.yarnpkg.com/@chakra-ui/icon/-/icon-3.0.9.tgz#ba127d9eefd727f62e9bce07a23eca39ae506744"
@@ -684,12 +720,12 @@
   dependencies:
     "@chakra-ui/shared-utils" "2.0.1"
 
-"@chakra-ui/icons@2.0.15":
-  version "2.0.15"
-  resolved "https://registry.yarnpkg.com/@chakra-ui/icons/-/icons-2.0.15.tgz#9613eae03e08dd9622723540cd3bf582e38b1fde"
-  integrity sha512-/Hsefej7DfRMg+Go+gf/UU4PHNMPmba41ogO1K3242aP9VSs/6/qXB3zrZHl21OX/rdrK408VqYEPInLmUwiHw==
+"@chakra-ui/icons@2.0.13":
+  version "2.0.13"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/icons/-/icons-2.0.13.tgz#4fafc20b4b4df4df5641128f04517f88d009fbd3"
+  integrity sha512-86X+NXAr2N/whkp8vNt0Qf5udqSPVc3lAe4U4w7SkSa/+PnDggfAM6Sc5HwLp8Er0h/RF97DuwFi9YZ/ZRJCDA==
   dependencies:
-    "@chakra-ui/icon" "3.0.14"
+    "@chakra-ui/icon" "3.0.13"
 
 "@chakra-ui/image@2.0.10":
   version "2.0.10"
@@ -1638,7 +1674,14 @@
   resolved "https://registry.yarnpkg.com/@chakra-ui/react-use-update-effect/-/react-use-update-effect-2.0.6.tgz#8aacaab25fd181a52569336ca5ef797e8ae1026a"
   integrity sha512-P6+0hocnasjl8xOrFH9BklyCNNzCBu/XAl5y7kZ82uVnS99SaC6cppO9/qWRZI9cYYheWfJ4lyLGeLOcNmI8/Q==
 
-"@chakra-ui/react-utils@2.0.11":
+"@chakra-ui/react-utils@2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/react-utils/-/react-utils-2.0.1.tgz#aebf12ee9f71fb7a27183d556131177f9ce745c8"
+  integrity sha512-xLiTn7WeUo2e3zvo8zUGpICgIGsLCPpkVbjEKhr1jAV41urqEtwlLc6uGir595OYqAC8zFDqs4HXhHouqNEtiw==
+  dependencies:
+    "@chakra-ui/utils" "^2.0.2"
+
+"@chakra-ui/react-utils@2.0.11", "@chakra-ui/react-utils@^2.0.1":
   version "2.0.11"
   resolved "https://registry.yarnpkg.com/@chakra-ui/react-utils/-/react-utils-2.0.11.tgz#5e99b21759eadc9276709268cca94c502afeda56"
   integrity sha512-LdE0Ay5Em2ew7fuux9MJAwaxoaU/QwVoH/t6uiUw/JCWpmiMGY6tw6t3eZTvZSRZNfyPWY0MmvOHR1UvIS9JIw==
@@ -2327,6 +2370,13 @@
   dependencies:
     "@chakra-ui/shared-utils" "2.0.4"
 
+"@chakra-ui/transition@2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/transition/-/transition-2.0.2.tgz#f2713814990d31cbe2a647d3baa09f32646c9810"
+  integrity sha512-s98gDFIGbv60WMyniVjy381NXxgS1Y/6RACR1Z1pReC5XZLY5GyMqeRYyFCAeE78qKkqon77Y8EDPQXl6X78dw==
+  dependencies:
+    "@chakra-ui/utils" "2.0.2"
+
 "@chakra-ui/transition@2.0.9":
   version "2.0.9"
   resolved "https://registry.yarnpkg.com/@chakra-ui/transition/-/transition-2.0.9.tgz#1967fd77f44b57681a9efe4e87561c82420cd2a2"
@@ -2342,7 +2392,7 @@
     framesync "5.3.0"
     lodash.mergewith "4.6.2"
 
-"@chakra-ui/utils@2.0.14":
+"@chakra-ui/utils@2.0.14", "@chakra-ui/utils@^2.0.2":
   version "2.0.14"
   resolved "https://registry.yarnpkg.com/@chakra-ui/utils/-/utils-2.0.14.tgz#b6776c7a020ea46ed88a8048dfa2b512a1fe95f7"
   integrity sha512-vYxtAUPY09Ex2Ae2ZvQKA1d2+lMKq/wUaRiqpwmeLfutEQuPQZc3qzQcAIMRQx3wLgXr9BUFDtHgBoOz0XKtZw==
@@ -2350,6 +2400,16 @@
     "@types/lodash.mergewith" "4.6.6"
     css-box-model "1.2.1"
     framesync "6.1.2"
+    lodash.mergewith "4.6.2"
+
+"@chakra-ui/utils@2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/utils/-/utils-2.0.2.tgz#130ba1647ea2b94ad956ae4cbcf685838d350593"
+  integrity sha512-9AC/ir9zm0shgFG7kdzOKUH2Wx5VB71M3uRMEsMZf75YlhhiU7AvBNtWXnJu+CBiTi41rKa5A+2ImMOsuPfGbA==
+  dependencies:
+    "@types/lodash.mergewith" "4.6.6"
+    css-box-model "1.2.1"
+    framesync "5.3.0"
     lodash.mergewith "4.6.2"
 
 "@chakra-ui/utils@2.0.9":
@@ -2646,6 +2706,42 @@
     "@walletconnect/types" "2.2.0"
     bowser "2.11.0"
 
+"@cosmos-kit/cosmostation-extension@^0.14.15":
+  version "0.14.15"
+  resolved "https://registry.yarnpkg.com/@cosmos-kit/cosmostation-extension/-/cosmostation-extension-0.14.15.tgz#897f2bc21ac8b54311ab8a3811962da671839246"
+  integrity sha512-eXpLWpcV2M1i92JxR1aigofrkgyhYIhJzOXP7YvGDAjB6IPtXTBzdGFtlDp+2Hdz51qDL2rD5RHcYXwERQUutQ==
+  dependencies:
+    "@babel/runtime" "7.11.2"
+    "@chain-registry/cosmostation" "1.8.0"
+    "@chain-registry/types" "0.13.1"
+    "@chakra-ui/react" "2.2.9"
+    "@cosmos-kit/core" "^0.27.14"
+    "@cosmos-kit/walletconnect-v1" "^0.1.3"
+    "@cosmostation/cosmos-client" "0.0.4"
+    "@emotion/react" "11"
+    "@emotion/styled" "11"
+    "@walletconnect/client" "1.8.0"
+    "@walletconnect/utils" "1.8.0"
+    react-icons "4.4.0"
+
+"@cosmos-kit/cosmostation-mobile@^0.14.15":
+  version "0.14.15"
+  resolved "https://registry.yarnpkg.com/@cosmos-kit/cosmostation-mobile/-/cosmostation-mobile-0.14.15.tgz#2e128770f207aaf9464e0c2bb93fb26c8c74a9ad"
+  integrity sha512-54QPu8Gp8FdR47Q8Bxojz6qx2hDh1pbFJGPQHae3Fm8SateV+PwlYk+BSK8+aKMF6a3hp1bpMzfTgaSsRgOLpw==
+  dependencies:
+    "@babel/runtime" "7.11.2"
+    "@chain-registry/cosmostation" "1.8.0"
+    "@chain-registry/types" "0.13.1"
+    "@chakra-ui/react" "2.2.9"
+    "@cosmos-kit/core" "^0.27.14"
+    "@cosmos-kit/walletconnect-v1" "^0.1.3"
+    "@cosmostation/cosmos-client" "0.0.4"
+    "@emotion/react" "11"
+    "@emotion/styled" "11"
+    "@walletconnect/client" "1.8.0"
+    "@walletconnect/utils" "1.8.0"
+    react-icons "4.4.0"
+
 "@cosmos-kit/cosmostation@0.14.15":
   version "0.14.15"
   resolved "https://registry.yarnpkg.com/@cosmos-kit/cosmostation/-/cosmostation-0.14.15.tgz#a9f4e0cd72497590e093ea3e67230b7c4b26a148"
@@ -2716,6 +2812,20 @@
     "@keplr-wallet/types" "0.11.21"
     "@walletconnect/types" "1.8.0"
     deepmerge "4.2.2"
+    react-icons "4.4.0"
+
+"@cosmos-kit/leap-extension@^0.13.15":
+  version "0.13.15"
+  resolved "https://registry.yarnpkg.com/@cosmos-kit/leap-extension/-/leap-extension-0.13.15.tgz#92baad904076dbb760fa87f24ad57f72582cb5f5"
+  integrity sha512-mmw91ouwSo6Bva7asqdLkMR2j/oNpSbBQo3ByeloxpOAJZBca9j42vGO2qz2ZRIQPug5tBlt5sWDg1XfEiDXAw==
+  dependencies:
+    "@babel/runtime" "7.11.2"
+    "@chain-registry/types" "0.13.1"
+    "@chakra-ui/react" "2.2.9"
+    "@cosmos-kit/core" "^0.27.14"
+    "@emotion/react" "11"
+    "@emotion/styled" "11"
+    "@walletconnect/client" "1.8.0"
     react-icons "4.4.0"
 
 "@cosmos-kit/leap@0.13.15":
