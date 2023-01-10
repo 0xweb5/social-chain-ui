@@ -4,6 +4,6 @@ export function handleChangeColorModeValue(
   light: any,
   dark: any
 ) {
-  if (colorMode === "light") return light;
-  if (colorMode === "dark") return dark;
+  if (colorMode === 'light') return light;
+  if (colorMode === 'dark') return dark;
 }

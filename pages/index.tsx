@@ -1,10 +1,6 @@
-import { useState } from "react";
-import Head from "next/head";
-import { useWallet } from "@cosmos-kit/react";
-import { StdFee } from "@cosmjs/amino";
-import { SigningStargateClient } from "@cosmjs/stargate";
-import BigNumber from "bignumber.js";
-
+import { useState } from 'react';
+import Head from 'next/head';
+import BigNumber from 'bignumber.js';
 import {
   Box,
   Divider,
@@ -19,26 +15,28 @@ import {
   Icon,
   useColorMode,
   Center,
-} from "@chakra-ui/react";
-import { BsFillMoonStarsFill, BsFillSunFill } from "react-icons/bs";
+} from '@chakra-ui/react';
+import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs';
+import { StdFee } from '@cosmjs/amino';
+import { SigningStargateClient } from '@cosmjs/stargate';
+import { WalletStatus } from '@cosmos-kit/core';
+import { useWallet } from '@cosmos-kit/react';
+import { cosmos } from 'osmojs';
+
 import {
   chainassets,
   chainName,
   coin,
   dependencies,
   products,
-} from "../config";
-
-import { WalletStatus } from "@cosmos-kit/core";
+} from '../config';
 import {
   Product,
   Dependency,
   WalletSection,
   handleChangeColorModeValue,
-} from "../components";
-import { SendTokensCard } from "../components/react/send-tokens-card";
-
-import { cosmos } from 'osmojs';
+} from '../components';
+import { SendTokensCard } from '../components/react/send-tokens-card';
 
 const library = {
   title: 'OsmoJS',
@@ -125,7 +123,7 @@ export default function Home() {
       ?.exponent as number;
 
     // show balance in display values by exponentiating it
-    const a = new BigNumber(balance.balance.amount);
+    const a = new BigNumber(balance?.balance?.amount ?? '');
     const amount = a.multipliedBy(10 ** -exp);
     setBalance(amount);
     setFetchingBalance(false);
@@ -140,13 +138,7 @@ export default function Home() {
       </Head>
       <Flex justifyContent="end" mb={4}>
         <Button variant="outline" px={0} onClick={toggleColorMode}>
-          <Icon
-            as={handleChangeColorModeValue(
-              colorMode,
-              BsFillMoonStarsFill,
-              BsFillSunFill
-            )}
-          />
+          <Icon as={colorMode === 'light' ? BsFillMoonStarsFill : BsFillSunFill} />
         </Button>
       </Flex>
       <Box textAlign="center">

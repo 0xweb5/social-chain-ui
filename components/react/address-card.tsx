@@ -1,3 +1,4 @@
+import React, { ReactNode, useEffect,useState } from 'react';
 import {
   Box,
   Button,
@@ -6,13 +7,12 @@ import {
   useClipboard,
   useColorMode,
   Image
-} from "@chakra-ui/react";
-import { WalletStatus } from "@cosmos-kit/core";
+} from '@chakra-ui/react';
+import { WalletStatus } from '@cosmos-kit/core';
 import { FaCheckCircle } from 'react-icons/fa';
 import { FiCopy } from 'react-icons/fi';
-import React, { ReactNode, useEffect,useState } from "react";
 
-import { CopyAddressType } from "../types";
+import { CopyAddressType } from '../types';
 
 const SIZES = {
   lg: {

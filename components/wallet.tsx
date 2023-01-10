@@ -1,3 +1,4 @@
+import { MouseEventHandler, useEffect } from 'react';
 import { useWallet } from '@cosmos-kit/react';
 import {
   Box,
@@ -7,9 +8,7 @@ import {
   Icon,
   Stack,
   useColorModeValue,
-  Text,
 } from '@chakra-ui/react';
-import { MouseEventHandler, useEffect } from 'react';
 import { FiAlertTriangle } from 'react-icons/fi';
 import {
   Astronaut,

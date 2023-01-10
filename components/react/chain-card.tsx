@@ -1,4 +1,5 @@
 import { Box, Stack, useColorModeValue, Image, Text } from '@chakra-ui/react';
+
 import { ChainCardProps } from '../types';
 
 export const ChainCard = (props: ChainCardProps) => {
