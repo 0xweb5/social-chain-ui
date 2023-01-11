@@ -32,7 +32,7 @@ import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs';
 import { StdFee } from '@cosmjs/amino';
 import { SigningStargateClient } from '@cosmjs/stargate';
 import { WalletStatus } from '@cosmos-kit/core';
-import { useWallet } from '@cosmos-kit/react';
+import { useChain, useWallet } from '@cosmos-kit/react';
 import { cosmos } from 'osmojs';
 import { sendMsgCreatePost } from '../proto/post/tx';
 import { queryClient } from '../proto/post/query';
@@ -105,8 +105,7 @@ const sendTokens = (
 export default function Home() {
   const { colorMode, toggleColorMode } = useColorMode();
 
-  const { getSigningStargateClient, address, walletStatus, getRpcEndpoint } =
-    useWallet();
+  const { getSigningStargateClient, address, status: walletStatus, getRpcEndpoint } = useChain('blog');
 
   const [balance, setBalance] = useState(new BigNumber(0));
   const [blogs, setBlogs] = useState<BlogPost[] | undefined>([])
