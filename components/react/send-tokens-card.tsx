@@ -33,14 +33,14 @@ export const SendTokensCard = ({
   const { colorMode } = useColorMode();
   if (!isConnectWallet) {
     return (
-      <Box boxShadow="0 0 2px #ccc, 0 0 5px -1px #ccc" borderRadius="lg" p={5}>
+      <Box boxShadow="0 0 2px #ccc, 0 0 5px -1px #ccc" borderRadius="lg" p={2}>
         <Heading
           as="h3"
           textAlign="center"
-          fontSize={{ base: "xl", md: "2xl" }}
+          fontSize={{ base: "m", md: "m" }}
           fontWeight="extrabold"
           color="primary.400"
-          m={30}
+          m={15}
         >
           Please Connect Your Wallet!
         </Heading>
@@ -89,7 +89,7 @@ export const SendTokensCard = ({
               "primary.200"
             )}
             fontWeight="semibold"
-            fontSize="xl"
+            fontSize="m"
           >
             {balance}
           </Text>

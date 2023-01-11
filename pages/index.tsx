@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import BigNumber from 'bignumber.js';
 import {
@@ -15,6 +15,14 @@ import {
   Icon,
   useColorMode,
   Center,
+  GridItem,
+  Input,
+  Textarea,
+  Alert,
+  AlertTitle,
+  AlertDescription,
+  AlertIcon,
+  CloseButton,
 } from '@chakra-ui/react';
 import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs';
 import { StdFee } from '@cosmjs/amino';
@@ -22,6 +30,9 @@ import { SigningStargateClient } from '@cosmjs/stargate';
 import { WalletStatus } from '@cosmos-kit/core';
 import { useWallet } from '@cosmos-kit/react';
 import { cosmos } from 'osmojs';
+import { sendMsgCreatePost } from '../proto/post/tx';
+import { queryClient } from '../proto/post/query';
+import Avatar from 'react-avatar';
 
 import {
   chainassets,
@@ -35,8 +46,10 @@ import {
   Dependency,
   WalletSection,
   handleChangeColorModeValue,
+  stringTruncateFromCenter,
 } from '../components';
 import { SendTokensCard } from '../components/react/send-tokens-card';
+import { Tx } from 'osmojs/types/codegen/cosmos/tx/v1beta1/tx';
 
 const library = {
   title: 'OsmoJS',
@@ -90,14 +103,34 @@ export default function Home() {
     useWallet();
 
   const [balance, setBalance] = useState(new BigNumber(0));
+  const [blogs, setBlogs] = useState([])
   const [isFetchingBalance, setFetchingBalance] = useState(false);
   const [resp, setResp] = useState("");
+  const [step, setStep] = useState(1)
+  const [title, setTitle] = useState()
+  const [content, setContent] = useState()
+  const [isPostLoading, setisPostLoading] = useState(false)
+  const [success, setsuccess] = useState(false)
+  const handleTitleChange = (e) => {
+    let inputValue = e.target.value
+    setTitle(inputValue)
+    setisPostLoading(false)
+  }
+
+  const handleContentChange = (e) => {
+    let inputValue = e.target.value
+    setContent(inputValue)
+  }
+
+
   const getBalance = async () => {
     if (!address) {
       setBalance(new BigNumber(0));
       setFetchingBalance(false);
       return;
     }
+
+
 
     let rpcEndpoint = await getRpcEndpoint();
 
@@ -129,53 +162,80 @@ export default function Home() {
     setFetchingBalance(false);
   };
 
+  useEffect(() => {
+    const queryPosts = async () => {
+      const qc = queryClient({ addr: 'http://47.242.123.146:1317' });
+      const posts = await qc.queryPosts();
+      console.log('posts:', posts.data.Post);
+      setBlogs(posts.data.Post)
+    }
+    queryPosts();
+  }, [])
+
+  const onMsgCreatePostSend = async () => {
+    setisPostLoading(true)
+    const stargateClient = await getSigningStargateClient();
+    if (!address || !stargateClient || !title || !content) {setisPostLoading(false);return } 
+
+    const value = { creator: address, title: title, body: content };
+    try {
+      const msgCreateTx = await sendMsgCreatePost({ stargateClient, value, signer: address });
+      console.log('msgCreateTx:', msgCreateTx);
+      setisPostLoading(false)
+      setsuccess(true)
+    } catch (error) {
+      console.log(error)
+      setisPostLoading(false)
+    }
+  }
+
   return (
-    <Container maxW="5xl" py={10}>
-      <Head>
-        <title>Social App Chain Interface</title>
-        <meta name="description" content="Social app chain" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <Flex justifyContent="end" mb={4}>
-        <Button variant="outline" px={0} onClick={toggleColorMode}>
-          <Icon as={colorMode === 'light' ? BsFillMoonStarsFill : BsFillSunFill} />
-        </Button>
-      </Flex>
-      <Box textAlign="center">
-        <Heading
-          as="h1"
-          fontSize={{ base: "3xl", md: "5xl" }}
-          fontWeight="extrabold"
-          mb={3}
-        >
-          Create Cosmos App
-        </Heading>
-        <Heading
-          as="h1"
-          fontWeight="bold"
-          fontSize={{ base: "2xl", md: "4xl" }}
-        >
-          <Text as="span">Welcome to&nbsp;</Text>
-          <Text
-            as="span"
-            color={handleChangeColorModeValue(
-              colorMode,
-              "primary.500",
-              "primary.200"
-            )}
-          >
-            CosmosKit&nbsp;+&nbsp;Next.js&nbsp;+&nbsp;
-            <Link href={library.href} target="_blank" rel="noreferrer">
-              {library.title}
-            </Link>
-          </Text>
-        </Heading>
-      </Box>
-
-      <WalletSection />
-
-      <Center mb={16}>
-        <SendTokensCard
+    <Container py={5} display='flex' bg='green' maxW='7xl' maxH='7xl' flexDirection='column'>
+      <Flex flexDirection='row' alignItems="flex-center" justifyContent= 'space-around' flex={1} w={'full'} marginBottom={10}>
+        <Link
+            w="10%"
+            maxW="sm"
+            alignItems="center"
+            justifyContent="center"
+            pt='2'
+            fontSize={'xl'}
+            fontWeight={'500'}
+            color={'#fff'}
+            onClick={()=>{setStep(1)}}
+        >Home</Link>
+                <Link
+            w="10%"
+            maxW="sm"
+            alignItems="center"
+            justifyContent="center"
+            pt='2'
+            fontSize={'xl'}
+            fontWeight={'500'}
+            color={'#fff'}
+            onClick={()=>{setStep(2)}}
+        >Create</Link>
+        <Link
+            w="10%"
+            maxW="sm"
+            alignItems="center"
+            justifyContent="center"
+            pt='2'
+            fontSize={'xl'}
+            fontWeight={'500'}
+            color={'#fff'}
+        >People</Link>
+        <Link
+            w="10%"
+            maxW="sm"
+            alignItems="center"
+            justifyContent="center"
+            pt='2'
+            fontSize={'xl'}
+            fontWeight={'500'}
+            color={'#fff'}
+        >Profile</Link>
+        <WalletSection />
+        {/* <SendTokensCard
           isConnectWallet={walletStatus === WalletStatus.Connected}
           balance={balance.toNumber()}
           isFetchingBalance={isFetchingBalance}
@@ -190,29 +250,58 @@ export default function Home() {
             setFetchingBalance(true);
             getBalance();
           }}
-        />
-      </Center>
+        /> */}
+      </Flex>
 
-      <Box mb={16}>
-        <Divider />
-      </Box>
+      <Flex flexDirection='row' alignItems="flex-center" justifyContent= 'space-around' w={'full'}>
+        { step===1 && (
+        <Grid templateColumns='repeat(5, 1fr)' gap={6} w={'full'}>
+          {blogs.map((item, index)=>(<GridItem w='100%' h='sm' bg='blue.500' borderRadius={'20'} p={2}>
+            <Text paddingBottom={2}>{item.title}</Text>
+            <Flex>
+            <Avatar name={item.creator} size='24' round="20px"/>
+            <Text marginLeft={1}>{stringTruncateFromCenter(item.creator,15)}</Text>
+            </Flex>
+            <Text paddingTop={2}>
+              {item.body}
+            </Text>
+          
+          
+          </GridItem>)
+          )
+          }
+        </Grid>)
+        }
+        { step===2 && (
+           <Flex alignItems={'center'} justifyContent={'center'} flexDir={'column'} w={'full'}>
+        { success===true && ( <Alert status='success'>
+          <AlertIcon />
+          <AlertTitle>Transaction sent</AlertTitle>
+          <AlertDescription>Please wait for the chain to post your blog</AlertDescription>
+          <CloseButton
+        alignSelf='flex-start'
+        position='relative'
+        right={-1}
+        top={-1}
+        onClick={()=>{setsuccess(false)}}
+      />
+        </Alert>)}
+            <Text 
+            fontSize={'2xl'}
+            fontWeight={'500'}
+            pb={2}
+            color={'#fff'}>
+              Create a post
+            </Text>
+            <Input placeholder='Enter the title'  _placeholder={{ color: 'inherit' }} marginBottom={3} w={'50%'} onChange={handleTitleChange}/>
+            <Textarea placeholder='Enter the content'  _placeholder={{ color: 'inherit' }} marginBottom={3} w={'50%'} h={'xl'} onChange={handleContentChange}></Textarea>
+            <Button size={'md'} paddingX={10} onClick={()=>{onMsgCreatePostSend()}} isLoading={isPostLoading}>Submit</Button>
+           </Flex>
+        )
+        }
 
-      <Stack
-        isInline={true}
-        spacing={1}
-        justifyContent="center"
-        opacity={0.5}
-        fontSize="sm"
-      >
-        <Text>Built with</Text>
-        <Link
-          href="https://cosmology.tech/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Cosmology
-        </Link>
-      </Stack>
+      </Flex>
+
     </Container>
   );
 }
