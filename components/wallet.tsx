@@ -1,13 +1,9 @@
 import { MouseEventHandler, useEffect } from 'react';
-import { useWallet } from '@cosmos-kit/react';
+import { useWallet, useChain } from '@cosmos-kit/react';
 import {
-  Box,
-  Center,
-  Grid,
   GridItem,
   Icon,
   Stack,
-  useColorModeValue,
   Flex
 } from '@chakra-ui/react';
 import { FiAlertTriangle } from 'react-icons/fi';
@@ -32,22 +28,32 @@ import { chainName } from '../config';
 export const WalletSection = () => {
   const walletManager = useWallet();
   const {
-    connect,
     openView,
-    walletStatus,
-    username,
-    address,
-    message,
     currentChainName,
     currentWallet,
     currentChainRecord,
     getChainLogo,
     setCurrentChain,
+    enable
   } = walletManager;
+  const {
+    connect,
+    status: walletStatus,
+    username,
+    address,
+    message,
+    // enable
+  } = useChain('blog');
 
   useEffect(() => {
-    setCurrentChain(chainName);
-  }, [setCurrentChain]);
+    const abc = async () => {
+      await enable('blog')
+    }
+    if (chainName) {
+      setCurrentChain(chainName);
+      abc()
+    }
+  }, [setCurrentChain, chainName]);
 
   const chain = {
     chainName: currentChainName,
