@@ -23,6 +23,9 @@ import {
   AlertDescription,
   AlertIcon,
   CloseButton,
+  Avatar, 
+  AvatarBadge, 
+  AvatarGroup,
 } from '@chakra-ui/react';
 import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs';
 import { StdFee } from '@cosmjs/amino';
@@ -32,7 +35,8 @@ import { useWallet } from '@cosmos-kit/react';
 import { cosmos } from 'osmojs';
 import { sendMsgCreatePost } from '../proto/post/tx';
 import { queryClient } from '../proto/post/query';
-import Avatar from 'react-avatar';
+import { identicon } from 'minidenticons'
+import {Identicon} from '../components'
 
 import {
   chainassets,
@@ -122,13 +126,14 @@ export default function Home() {
     setContent(inputValue)
   }
 
-
   const getBalance = async () => {
     if (!address) {
       setBalance(new BigNumber(0));
       setFetchingBalance(false);
       return;
     }
+    
+    
 
 
 
@@ -190,7 +195,7 @@ export default function Home() {
   }
 
   return (
-    <Container py={5} display='flex' bg='green' maxW='7xl' maxH='7xl' flexDirection='column'>
+    <Container py={5} display='flex' bg='green' maxW='7xl' maxH='7xl' flexDirection='column' width={'full'}>
       <Flex flexDirection='row' alignItems="flex-center" justifyContent= 'space-around' flex={1} w={'full'} marginBottom={10}>
         <Link
             w="10%"
@@ -258,15 +263,24 @@ export default function Home() {
         <Grid templateColumns='repeat(5, 1fr)' gap={6} w={'full'}>
           {blogs.map((item, index)=>(<GridItem w='100%' h='sm' bg='blue.500' borderRadius={'20'} p={2}>
             <Text paddingBottom={2}>{item.title}</Text>
-            <Flex>
-            <Avatar name={item.creator} size='24' round="20px"/>
-            <Text marginLeft={1}>{stringTruncateFromCenter(item.creator,15)}</Text>
+            <Flex alignItems="flex-center">
+              <Box
+              w={8}
+              borderRadius={'50%'}
+              bg={'#fff'}
+              dangerouslySetInnerHTML={{
+                __html: identicon(
+                  'sdad',
+                  90,
+                  50
+                )
+              }}
+            />
+            <Text marginLeft={1} pt={1}>{stringTruncateFromCenter(item.creator,15)}</Text>
             </Flex>
             <Text paddingTop={2}>
               {item.body}
             </Text>
-          
-          
           </GridItem>)
           )
           }
