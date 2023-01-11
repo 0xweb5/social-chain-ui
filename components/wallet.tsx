@@ -121,6 +121,7 @@ export const WalletSection = () => {
         maxW="sm"
         alignItems="center"
         justifyContent="center"
+        mr={10}
       >
         {currentChainName && (
           <GridItem >

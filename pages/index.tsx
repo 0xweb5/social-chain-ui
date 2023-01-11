@@ -238,6 +238,7 @@ export default function Home() {
             fontSize={'xl'}
             fontWeight={'500'}
             color={'#fff'}
+            mr={10}
         >Profile</Link>
         <WalletSection />
         {/* <SendTokensCard
@@ -260,12 +261,13 @@ export default function Home() {
 
       <Flex flexDirection='row' alignItems="flex-center" justifyContent= 'space-around' w={'full'}>
         { step===1 && (
-        <Grid templateColumns='repeat(5, 1fr)' gap={6} w={'full'}>
+        <Grid templateColumns='repeat(4, 1fr)' gap={6} w={'full'}>
           {blogs.map((item, index)=>(<GridItem w='100%' h='sm' bg='blue.500' borderRadius={'20'} p={2}>
             <Text paddingBottom={2}>{item.title}</Text>
-            <Flex alignItems="flex-center">
+            <Flex alignItems="flex-center" justifyContent= 'space-around'>
               <Box
               w={8}
+              h={8}
               borderRadius={'50%'}
               bg={'#fff'}
               dangerouslySetInnerHTML={{
@@ -276,7 +278,8 @@ export default function Home() {
                 )
               }}
             />
-            <Text marginLeft={1} pt={1}>{stringTruncateFromCenter(item.creator,15)}</Text>
+            <Text pt={1}>{stringTruncateFromCenter(item.creator,12)}</Text>
+            <Button h={6} mt={1}>Follow</Button>
             </Flex>
             <Text paddingTop={2}>
               {item.body}
