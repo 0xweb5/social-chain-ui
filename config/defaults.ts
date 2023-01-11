@@ -12,9 +12,9 @@ import {
   osmosisAminoConverters,
   osmosisProtoRegistry
 } from 'osmojs';
+import { MsgCreatePost, MsgFollowCreator } from '../proto/post/types';
 
 export const chainName = 'blog';
-// export const chainName = 'osmosistestnet';
 
 const localosmosis: Chain = {
   chain_name: 'blog',
@@ -71,7 +71,9 @@ const protoRegistry: ReadonlyArray<[string, GeneratedType]> = [
   ...cosmosProtoRegistry,
   ...cosmwasmProtoRegistry,
   ...ibcProtoRegistry,
-  ...osmosisProtoRegistry
+  ...osmosisProtoRegistry,
+  ["/blog.blog.MsgCreatePost", MsgCreatePost],
+  ["/blog.blog.MsgFollowCreator", MsgFollowCreator],
 ];
 
 const aminoConverters = {

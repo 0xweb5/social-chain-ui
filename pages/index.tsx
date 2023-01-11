@@ -1,10 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import BigNumber from 'bignumber.js';
 import {
   Box,
   Divider,
-  Grid,
   Heading,
   Text,
   Stack,
@@ -27,16 +26,14 @@ import {
   chainassets,
   chainName,
   coin,
-  dependencies,
-  products,
 } from '../config';
 import {
-  Product,
-  Dependency,
   WalletSection,
   handleChangeColorModeValue,
 } from '../components';
 import { SendTokensCard } from '../components/react/send-tokens-card';
+import { sendMsgCreatePost } from '../proto/post/tx';
+import { queryClient } from '../proto/post/query';
 
 const library = {
   title: 'OsmoJS',
@@ -86,8 +83,7 @@ const sendTokens = (
 export default function Home() {
   const { colorMode, toggleColorMode } = useColorMode();
 
-  const { getSigningStargateClient, address, walletStatus, getRpcEndpoint } =
-    useWallet();
+  const { getSigningStargateClient, address, walletStatus, getRpcEndpoint } = useWallet();
 
   const [balance, setBalance] = useState(new BigNumber(0));
   const [isFetchingBalance, setFetchingBalance] = useState(false);
@@ -128,6 +124,26 @@ export default function Home() {
     setBalance(amount);
     setFetchingBalance(false);
   };
+
+  useEffect(() => {
+    const queryPosts = async () => {
+      const qc = queryClient({ addr: 'http://47.242.123.146:1317' });
+      const posts = await qc.queryPosts();
+      console.log('posts:', posts);
+    }
+
+    queryPosts();
+  }, [])
+
+  const onMsgCreatePostSend = async () => {
+    const stargateClient = await getSigningStargateClient();
+    if (!address || !stargateClient) return
+
+    const value = { creator: address, title: '测试标题1', body: 'another 测试内容 from UI' };
+    
+    const msgCreateTx = await sendMsgCreatePost({ stargateClient, value, signer: address });
+    console.log('msgCreateTx:', msgCreateTx);
+  }
 
   return (
     <Container maxW="5xl" py={10}>
@@ -173,6 +189,10 @@ export default function Home() {
       </Box>
 
       <WalletSection />
+
+      <Center mb={16}>
+        <Button colorScheme={'teal'} onClick={() => onMsgCreatePostSend()}>Create Post</Button>
+      </Center>
 
       <Center mb={16}>
         <SendTokensCard
