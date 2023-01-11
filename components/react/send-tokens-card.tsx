@@ -33,7 +33,7 @@ export const SendTokensCard = ({
   const { colorMode } = useColorMode();
   if (!isConnectWallet) {
     return (
-      <Box boxShadow="0 0 2px #ccc, 0 0 5px -1px #ccc" borderRadius="lg" p={2}>
+      <Box boxShadow="0 0 5px #fff, 0 0 5px -1px #fff" borderRadius="lg" p={2}>
         <Heading
           as="h3"
           textAlign="center"
@@ -51,8 +51,8 @@ export const SendTokensCard = ({
     <Stack
       boxShadow={handleChangeColorModeValue(
         colorMode,
-        "0 0 2px #dfdfdf, 0 0 6px -2px #d3d3d3",
-        "0 0 2px #212121, 0 0 6px -2px #8a8a8a"
+        "0 0 5px #fff, 0 0 7px -2px #fff",
+        "0 0 5px #fff, 0 0 7px -2px #fff"
       )}
       borderRadius="lg"
       w="full"
@@ -71,7 +71,7 @@ export const SendTokensCard = ({
           "blackAlpha.300"
         )}
         borderRadius="md"
-        border="1px solid"
+        border="2px solid"
         borderColor={handleChangeColorModeValue(
           colorMode,
           "gray.300",

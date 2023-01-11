@@ -55,7 +55,8 @@ import {
 } from '../components';
 import { SendTokensCard } from '../components/react/send-tokens-card';
 import { Tx } from 'osmojs/types/codegen/cosmos/tx/v1beta1/tx';
-import { BlogPost } from '../proto/post/rest';
+import { BlogPost, BlogAccountsList } from '../proto/post/rest';
+import randomInteger from 'random-int';
 
 const library = {
   title: 'OsmoJS',
@@ -116,6 +117,7 @@ export default function Home() {
   const [content, setContent] = useState()
   const [isPostLoading, setisPostLoading] = useState(false)
   const [success, setsuccess] = useState(false)
+  const [accounts, setaccounts] = useState<string[] | undefined>([])
   const handleTitleChange = (e: { target: { value: any; }; }) => {
     let inputValue = e.target.value
     setTitle(inputValue)
@@ -172,6 +174,14 @@ export default function Home() {
       setBlogs(posts.data.Post)
     }
     queryPosts();
+
+    const queryAccounts = async () => {
+      const qc = queryClient({ addr: 'http://47.242.123.146:1317' });
+      const accounts = await qc.queryAccountList();
+      console.log('accounts:', accounts);
+      setaccounts(accounts.data.creatorList?.creatorList)
+    }
+    queryAccounts();
   }, [])
 
   const onMsgCreatePostSend = async () => {
@@ -235,7 +245,8 @@ export default function Home() {
           fontSize={'xl'}
           fontWeight={'500'}
           color={'#fff'}
-        >People</Link>
+          onClick={()=>{setStep(3)}}
+        >Creators</Link>
         <Link
           w="10%"
           maxW="sm"
@@ -245,24 +256,9 @@ export default function Home() {
           fontSize={'xl'}
           fontWeight={'500'}
           color={'#fff'}
+          onClick={()=>{setStep(4)}}
         >Profile</Link>
         <WalletSection />
-        {/* <SendTokensCard
-          isConnectWallet={walletStatus === WalletStatus.Connected}
-          balance={balance.toNumber()}
-          isFetchingBalance={isFetchingBalance}
-          response={resp}
-          sendTokensButtonText="Send Tokens"
-          handleClickSendTokens={sendTokens(
-            getSigningStargateClient as () => Promise<SigningStargateClient>,
-            setResp as () => any,
-            address as string
-          )}
-          handleClickGetBalance={() => {
-            setFetchingBalance(true);
-            getBalance();
-          }}
-        /> */}
       </Flex>
 
       <Flex flexDirection='row' alignItems="flex-center" justifyContent= 'space-around' w={'full'}>
@@ -286,7 +282,7 @@ export default function Home() {
                     bg={'#fff'}
                     dangerouslySetInnerHTML={{
                       __html: identicon(
-                        'sdad',
+                        item?.creator ?? '',
                         90,
                         50
                       )
@@ -339,6 +335,97 @@ export default function Home() {
             </Flex>
           )
         }
+        {step===3 &&(
+          <Grid templateColumns='repeat(3, 1fr)' gap={6}>
+            {accounts?.map((item, index)=>(
+              <GridItem display={'flex'} w='100%' h='auto' bg='blue.500' alignItems={'center'} p={3} borderRadius={'20'} flexDirection={'column'}>
+                  <Box
+                    w={8}
+                    h={8}
+                    mb={2}
+                    borderRadius={'50%'}
+                    bg={'#fff'}
+                    dangerouslySetInnerHTML={{
+                      __html: identicon(
+                        item,
+                        90,
+                        50
+                      )
+                    }}
+                  />
+                <Text color={'#fff'} opacity={0.9} textAlign={'center'} fontWeight={'600'} fontSize={'xl'}>User {index}</Text>
+                <Text color={'#fff'} opacity={0.7}>{item}</Text>
+                <Flex flex={1} w={'full'} justifyContent={'space-around'} p={2}>
+                    <Text color={'#fff'} fontWeight={'600'}>Followers: {randomInteger(accounts.length)}</Text>
+                    <Text color={'#fff'} fontWeight={'600'}>Followings: {randomInteger(accounts.length)}</Text>
+                </Flex>
+                <Flex flex={1} w={'full'} justifyContent={'center'} p={2}>
+                    <Button h={7} mx={2}>Blogs</Button>
+                    <Button h={7} mx={2}>Profile</Button>
+                    <Button h={7} mx={2}>Follow</Button>
+                </Flex>
+                
+              </GridItem>
+          ))}
+        </Grid>
+        )
+        }
+        {step ===4 && (
+          <Flex flexDir={'column'}>
+            <Text color={'#fff'} fontSize={'xl'} mb={5}>
+              Hi, {address}
+            </Text>
+            <SendTokensCard
+              isConnectWallet={walletStatus === WalletStatus.Connected}
+              balance={balance.toNumber()}
+              isFetchingBalance={isFetchingBalance}
+              response={resp}
+              sendTokensButtonText="Send Tokens"
+              handleClickSendTokens={sendTokens(
+                getSigningStargateClient as () => Promise<SigningStargateClient>,
+                setResp as () => any,
+                address as string
+              )}
+              handleClickGetBalance={() => {
+                setFetchingBalance(true);
+                getBalance();
+              }}
+            />
+            <Text color={'#fff'} fontSize={'xl'} mt={5}>Your blogs</Text>
+            {blogs?.map((item)=>(
+              item.creator===address && (
+                <GridItem w='100%' h='auto' display={'flex'} bgGradient='linear(to-t, green.100, pink.500)' borderRadius={'20'} p={4} flex={1} flexDirection={'column'} marginY={2}>
+                  <Text 
+                    fontSize={'md'}
+                    fontWeight={'700'}
+                    pb={2}
+                    color={'#fff'}
+                    textAlign={'center'}
+                  >{item.title}</Text>
+                  <Flex alignItems="flex-center" justifyContent= 'space-around'>
+                    <Box
+                    w={8}
+                    h={8}
+                    borderRadius={'50%'}
+                    bg={'#fff'}
+                    dangerouslySetInnerHTML={{
+                      __html: identicon(
+                        item?.creator ?? '',
+                        90,
+                        50
+                      )
+                    }}
+                  />
+                  <Text marginLeft={1} pt={1} color={'#fff'} opacity={0.7}>{item?.creator ?? ''}</Text>
+                  </Flex>
+                  <Text paddingTop={3} color={'#fff'} opacity={0.9}>
+                    {item.body}
+                  </Text>
+                </GridItem>)
+              ))}
+          </Flex>
+        )      
+      }
 
       </Flex>
     </Box>
