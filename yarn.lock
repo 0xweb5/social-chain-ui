@@ -873,7 +873,7 @@
   dependencies:
     "@chakra-ui/shared-utils" "2.0.1"
 
-"@chakra-ui/icons@2.0.13":
+"@chakra-ui/icons@^2.0.13":
   version "2.0.13"
   resolved "https://registry.npmjs.org/@chakra-ui/icons/-/icons-2.0.13.tgz"
   integrity sha512-86X+NXAr2N/whkp8vNt0Qf5udqSPVc3lAe4U4w7SkSa/+PnDggfAM6Sc5HwLp8Er0h/RF97DuwFi9YZ/ZRJCDA==

@@ -8,7 +8,6 @@ export const ChainCard = (props: ChainCardProps) => {
       isInline={true}
       alignItems="center"
       justifyContent={'center'}
-      spacing={3}
       overflow="hidden"
       color={useColorModeValue('blackAlpha.800', 'whiteAlpha.800')}
       w="full"
@@ -31,7 +30,7 @@ export const ChainCard = (props: ChainCardProps) => {
           fallbackSrc={'https://dummyimage.com/150/9e9e9e/ffffff&text=☒'}
         />
       </Box>
-      <Text fontSize="m" fontWeight="semibold" paddingEnd={'18px'}>
+      <Text fontSize="m" fontWeight="semibold">
         {props.prettyName}
       </Text>
     </Stack>

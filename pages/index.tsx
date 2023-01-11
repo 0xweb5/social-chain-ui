@@ -26,6 +26,7 @@ import {
   Avatar, 
   AvatarBadge, 
   AvatarGroup,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs';
 import { StdFee } from '@cosmjs/amino';
@@ -36,7 +37,7 @@ import { cosmos } from 'osmojs';
 import { sendMsgCreatePost } from '../proto/post/tx';
 import { queryClient } from '../proto/post/query';
 import { identicon } from 'minidenticons'
-import {Identicon} from '../components'
+import { StarIcon, ChatIcon} from '@chakra-ui/icons'
 
 import {
   chainassets,
@@ -54,6 +55,7 @@ import {
 } from '../components';
 import { SendTokensCard } from '../components/react/send-tokens-card';
 import { Tx } from 'osmojs/types/codegen/cosmos/tx/v1beta1/tx';
+import { BlogPost } from '../proto/post/rest';
 
 const library = {
   title: 'OsmoJS',
@@ -107,7 +109,7 @@ export default function Home() {
     useWallet();
 
   const [balance, setBalance] = useState(new BigNumber(0));
-  const [blogs, setBlogs] = useState([])
+  const [blogs, setBlogs] = useState<BlogPost[] | undefined>([])
   const [isFetchingBalance, setFetchingBalance] = useState(false);
   const [resp, setResp] = useState("");
   const [step, setStep] = useState(1)
@@ -115,13 +117,13 @@ export default function Home() {
   const [content, setContent] = useState()
   const [isPostLoading, setisPostLoading] = useState(false)
   const [success, setsuccess] = useState(false)
-  const handleTitleChange = (e) => {
+  const handleTitleChange = (e: { target: { value: any; }; }) => {
     let inputValue = e.target.value
     setTitle(inputValue)
     setisPostLoading(false)
   }
 
-  const handleContentChange = (e) => {
+  const handleContentChange = (e: { target: { value: any; }; }) => {
     let inputValue = e.target.value
     setContent(inputValue)
   }
@@ -133,14 +135,10 @@ export default function Home() {
       return;
     }
     
-    
-
-
-
     let rpcEndpoint = await getRpcEndpoint();
 
     if (!rpcEndpoint) {
-      console.log("no rpc endpoint — using a fallback");
+      console.log("no rpc endpoint — using a fallback");
       rpcEndpoint = `https://rpc.cosmos.directory/${chainName}`;
     }
 
@@ -195,50 +193,59 @@ export default function Home() {
   }
 
   return (
-    <Container py={5} display='flex' bg='green' maxW='7xl' maxH='7xl' flexDirection='column' width={'full'}>
+    <Box
+      py={{ base: '0.5rem', md: '3rem' }}
+      bgGradient={[
+        'linear(to-b, orange.100, purple.300)',
+        'linear(to-t, blue.200, teal.500)',
+        'linear(to-tr, teal.300, yellow.400)',
+      ]}
+      mx={'auto'}
+      px={10}
+      minH={'100vh'}
+    >
       <Flex flexDirection='row' alignItems="flex-center" justifyContent= 'space-around' flex={1} w={'full'} marginBottom={10}>
         <Link
-            w="10%"
-            maxW="sm"
-            alignItems="center"
-            justifyContent="center"
-            pt='2'
-            fontSize={'xl'}
-            fontWeight={'500'}
-            color={'#fff'}
-            onClick={()=>{setStep(1)}}
+          w="10%"
+          maxW="sm"
+          alignItems="center"
+          justifyContent="center"
+          pt='2'
+          fontSize={'xl'}
+          fontWeight={'500'}
+          color={'#fff'}
+          onClick={()=>{setStep(1)}}
         >Home</Link>
-                <Link
-            w="10%"
-            maxW="sm"
-            alignItems="center"
-            justifyContent="center"
-            pt='2'
-            fontSize={'xl'}
-            fontWeight={'500'}
-            color={'#fff'}
-            onClick={()=>{setStep(2)}}
+        <Link
+          w="10%"
+          maxW="sm"
+          alignItems="center"
+          justifyContent="center"
+          pt='2'
+          fontSize={'xl'}
+          fontWeight={'500'}
+          color={'#fff'}
+          onClick={()=>{setStep(2)}}
         >Create</Link>
         <Link
-            w="10%"
-            maxW="sm"
-            alignItems="center"
-            justifyContent="center"
-            pt='2'
-            fontSize={'xl'}
-            fontWeight={'500'}
-            color={'#fff'}
+          w="10%"
+          maxW="sm"
+          alignItems="center"
+          justifyContent="center"
+          pt='2'
+          fontSize={'xl'}
+          fontWeight={'500'}
+          color={'#fff'}
         >People</Link>
         <Link
-            w="10%"
-            maxW="sm"
-            alignItems="center"
-            justifyContent="center"
-            pt='2'
-            fontSize={'xl'}
-            fontWeight={'500'}
-            color={'#fff'}
-            mr={10}
+          w="10%"
+          maxW="sm"
+          alignItems="center"
+          justifyContent="center"
+          pt='2'
+          fontSize={'xl'}
+          fontWeight={'500'}
+          color={'#fff'}
         >Profile</Link>
         <WalletSection />
         {/* <SendTokensCard
@@ -260,65 +267,81 @@ export default function Home() {
       </Flex>
 
       <Flex flexDirection='row' alignItems="flex-center" justifyContent= 'space-around' w={'full'}>
-        { step===1 && (
-        <Grid templateColumns='repeat(4, 1fr)' gap={6} w={'full'}>
-          {blogs.map((item, index)=>(<GridItem w='100%' h='sm' bg='blue.500' borderRadius={'20'} p={2}>
-            <Text paddingBottom={2}>{item.title}</Text>
-            <Flex alignItems="flex-center" justifyContent= 'space-around'>
-              <Box
-              w={8}
-              h={8}
-              borderRadius={'50%'}
-              bg={'#fff'}
-              dangerouslySetInnerHTML={{
-                __html: identicon(
-                  'sdad',
-                  90,
-                  50
-                )
-              }}
-            />
-            <Text pt={1}>{stringTruncateFromCenter(item.creator,12)}</Text>
-            <Button h={6} mt={1}>Follow</Button>
-            </Flex>
-            <Text paddingTop={2}>
-              {item.body}
-            </Text>
-          </GridItem>)
+        { 
+          step===1 && (
+            <Grid templateColumns='repeat(4, 1fr)' gap={6} w={'full'}>
+              {blogs?.map((item)=>(
+                <GridItem w='100%' h='sm' display={'flex'} bgGradient='linear(to-t, green.100, pink.500)' borderRadius={'20'} p={4} flex={1} flexDirection={'column'}>
+                  <Text 
+                    fontSize={'md'}
+                    fontWeight={'700'}
+                    pb={2}
+                    color={'#fff'}
+                    textAlign={'center'}
+                  >{item.title}</Text>
+                  <Flex alignItems="flex-center" justifyContent= 'space-around'>
+                    <Box
+                    w={8}
+                    h={8}
+                    borderRadius={'50%'}
+                    bg={'#fff'}
+                    dangerouslySetInnerHTML={{
+                      __html: identicon(
+                        'sdad',
+                        90,
+                        50
+                      )
+                    }}
+                  />
+                  <Text marginLeft={1} pt={1} color={'#fff'} opacity={0.7}>{stringTruncateFromCenter(item?.creator ?? '', 12)}</Text>
+                  <Button h={6} mt={1}>Follow</Button>
+                  </Flex>
+                  <Text paddingTop={3} color={'#fff'} opacity={0.9}>
+                    {item.body}
+                  </Text>
+                  <Box display={'flex'} alignItems={'flex-end'} justifyContent={'flex-end'} flex={1} alignSelf={'end'} columnGap={3}>
+                    <StarIcon boxSize={6} color={'pink'}/>
+                    <ChatIcon boxSize={6} color={'pink'}/>
+                  </Box>
+                </GridItem>
+              ))}
+            </Grid>
           )
-          }
-        </Grid>)
         }
-        { step===2 && (
-           <Flex alignItems={'center'} justifyContent={'center'} flexDir={'column'} w={'full'}>
-        { success===true && ( <Alert status='success'>
-          <AlertIcon />
-          <AlertTitle>Transaction sent</AlertTitle>
-          <AlertDescription>Please wait for the chain to post your blog</AlertDescription>
-          <CloseButton
-        alignSelf='flex-start'
-        position='relative'
-        right={-1}
-        top={-1}
-        onClick={()=>{setsuccess(false)}}
-      />
-        </Alert>)}
-            <Text 
-            fontSize={'2xl'}
-            fontWeight={'500'}
-            pb={2}
-            color={'#fff'}>
-              Create a post
-            </Text>
-            <Input placeholder='Enter the title'  _placeholder={{ color: 'inherit' }} marginBottom={3} w={'50%'} onChange={handleTitleChange}/>
-            <Textarea placeholder='Enter the content'  _placeholder={{ color: 'inherit' }} marginBottom={3} w={'50%'} h={'xl'} onChange={handleContentChange}></Textarea>
-            <Button size={'md'} paddingX={10} onClick={()=>{onMsgCreatePostSend()}} isLoading={isPostLoading}>Submit</Button>
-           </Flex>
-        )
+        { 
+          step===2 && (
+            <Flex alignItems={'center'} justifyContent={'center'} flexDir={'column'} w={'full'}>
+              { 
+                success===true && ( 
+                  <Alert status='success'>
+                    <AlertIcon />
+                    <AlertTitle>Transaction sent</AlertTitle>
+                    <AlertDescription>Please wait for the chain to post your blog</AlertDescription>
+                    <CloseButton
+                      alignSelf='flex-start'
+                      position='relative'
+                      right={-1}
+                      top={-1}
+                      onClick={()=>{setsuccess(false)}}
+                    />
+                  </Alert>
+                )
+              }
+              <Text 
+                fontSize={'2xl'}
+                fontWeight={'500'}
+                pb={2}
+                color={'#fff'}>
+                Create a post
+              </Text>
+              <Input placeholder='Enter the title'  _placeholder={{ color: 'inherit' }} marginBottom={3} w={'50%'} onChange={handleTitleChange} borderWidth={2}/>
+              <Textarea placeholder='Enter the content'  _placeholder={{ color: 'inherit' }} marginBottom={3} w={'50%'} h={'xl'} onChange={handleContentChange} borderWidth={2}></Textarea>
+              <Button size={'md'} paddingX={10} onClick={()=>{onMsgCreatePostSend()}} isLoading={isPostLoading}>Submit</Button>
+            </Flex>
+          )
         }
 
       </Flex>
-
-    </Container>
+    </Box>
   );
 }
