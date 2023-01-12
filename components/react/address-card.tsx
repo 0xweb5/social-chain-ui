@@ -108,6 +108,7 @@ export const ConnectedShowAddress = ({
       minH="fit-content"
       pl={2}
       pr={2}
+      marginRight={2}
       color={handleChangeColorModeValue(
         colorMode,
         'gray.700',

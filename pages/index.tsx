@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import BigNumber from 'bignumber.js';
 import {
@@ -15,13 +15,29 @@ import {
   Icon,
   useColorMode,
   Center,
+  GridItem,
+  Input,
+  Textarea,
+  Alert,
+  AlertTitle,
+  AlertDescription,
+  AlertIcon,
+  CloseButton,
+  Avatar, 
+  AvatarBadge, 
+  AvatarGroup,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs';
 import { StdFee } from '@cosmjs/amino';
 import { SigningStargateClient } from '@cosmjs/stargate';
 import { WalletStatus } from '@cosmos-kit/core';
-import { useWallet } from '@cosmos-kit/react';
+import { useChain, useWallet } from '@cosmos-kit/react';
 import { cosmos } from 'osmojs';
+import { sendMsgCreatePost } from '../proto/post/tx';
+import { queryClient } from '../proto/post/query';
+import { identicon } from 'minidenticons'
+import { StarIcon, ChatIcon} from '@chakra-ui/icons'
 
 import {
   chainassets,
@@ -35,8 +51,12 @@ import {
   Dependency,
   WalletSection,
   handleChangeColorModeValue,
+  stringTruncateFromCenter,
 } from '../components';
 import { SendTokensCard } from '../components/react/send-tokens-card';
+import { Tx } from 'osmojs/types/codegen/cosmos/tx/v1beta1/tx';
+import { BlogPost, BlogAccountsList } from '../proto/post/rest';
+import randomInteger from 'random-int';
 
 const library = {
   title: 'OsmoJS',
@@ -86,23 +106,40 @@ const sendTokens = (
 export default function Home() {
   const { colorMode, toggleColorMode } = useColorMode();
 
-  const { getSigningStargateClient, address, walletStatus, getRpcEndpoint } =
-    useWallet();
+  const { getSigningStargateClient, address, status: walletStatus, getRpcEndpoint } = useChain('blog');
 
   const [balance, setBalance] = useState(new BigNumber(0));
+  const [blogs, setBlogs] = useState<BlogPost[] | undefined>([])
   const [isFetchingBalance, setFetchingBalance] = useState(false);
   const [resp, setResp] = useState("");
+  const [step, setStep] = useState(1)
+  const [title, setTitle] = useState()
+  const [content, setContent] = useState()
+  const [isPostLoading, setisPostLoading] = useState(false)
+  const [success, setsuccess] = useState(false)
+  const [accounts, setaccounts] = useState<string[] | undefined>([])
+  const handleTitleChange = (e: { target: { value: any; }; }) => {
+    let inputValue = e.target.value
+    setTitle(inputValue)
+    setisPostLoading(false)
+  }
+
+  const handleContentChange = (e: { target: { value: any; }; }) => {
+    let inputValue = e.target.value
+    setContent(inputValue)
+  }
+
   const getBalance = async () => {
     if (!address) {
       setBalance(new BigNumber(0));
       setFetchingBalance(false);
       return;
     }
-
+    
     let rpcEndpoint = await getRpcEndpoint();
 
     if (!rpcEndpoint) {
-      console.log("no rpc endpoint — using a fallback");
+      console.log("no rpc endpoint — using a fallback");
       rpcEndpoint = `https://rpc.cosmos.directory/${chainName}`;
     }
 
@@ -129,90 +166,268 @@ export default function Home() {
     setFetchingBalance(false);
   };
 
+  useEffect(() => {
+    const queryPosts = async () => {
+      const qc = queryClient({ addr: 'http://47.242.123.146:1317' });
+      const posts = await qc.queryPosts();
+      console.log('posts:', posts.data.Post);
+      setBlogs(posts.data.Post)
+    }
+    queryPosts();
+
+    const queryAccounts = async () => {
+      const qc = queryClient({ addr: 'http://47.242.123.146:1317' });
+      const accounts = await qc.queryAccountList();
+      console.log('accounts:', accounts);
+      setaccounts(accounts.data.creatorList?.creatorList)
+    }
+    queryAccounts();
+  }, [])
+
+  const onMsgCreatePostSend = async () => {
+    setisPostLoading(true)
+    const stargateClient = await getSigningStargateClient();
+    if (!address || !stargateClient || !title || !content) {setisPostLoading(false);return } 
+
+    const value = { creator: address, title: title, body: content };
+    try {
+      const msgCreateTx = await sendMsgCreatePost({ stargateClient, value, signer: address });
+      console.log('msgCreateTx:', msgCreateTx);
+      setisPostLoading(false)
+      setsuccess(true)
+    } catch (error) {
+      console.log(error)
+      setisPostLoading(false)
+    }
+  }
+
   return (
-    <Container maxW="5xl" py={10}>
-      <Head>
-        <title>Social App Chain Interface</title>
-        <meta name="description" content="Social app chain" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <Flex justifyContent="end" mb={4}>
-        <Button variant="outline" px={0} onClick={toggleColorMode}>
-          <Icon as={colorMode === 'light' ? BsFillMoonStarsFill : BsFillSunFill} />
-        </Button>
-      </Flex>
-      <Box textAlign="center">
-        <Heading
-          as="h1"
-          fontSize={{ base: "3xl", md: "5xl" }}
-          fontWeight="extrabold"
-          mb={3}
-        >
-          Create Cosmos App
-        </Heading>
-        <Heading
-          as="h1"
-          fontWeight="bold"
-          fontSize={{ base: "2xl", md: "4xl" }}
-        >
-          <Text as="span">Welcome to&nbsp;</Text>
-          <Text
-            as="span"
-            color={handleChangeColorModeValue(
-              colorMode,
-              "primary.500",
-              "primary.200"
-            )}
-          >
-            CosmosKit&nbsp;+&nbsp;Next.js&nbsp;+&nbsp;
-            <Link href={library.href} target="_blank" rel="noreferrer">
-              {library.title}
-            </Link>
-          </Text>
-        </Heading>
-      </Box>
-
-      <WalletSection />
-
-      <Center mb={16}>
-        <SendTokensCard
-          isConnectWallet={walletStatus === WalletStatus.Connected}
-          balance={balance.toNumber()}
-          isFetchingBalance={isFetchingBalance}
-          response={resp}
-          sendTokensButtonText="Send Tokens"
-          handleClickSendTokens={sendTokens(
-            getSigningStargateClient as () => Promise<SigningStargateClient>,
-            setResp as () => any,
-            address as string
-          )}
-          handleClickGetBalance={() => {
-            setFetchingBalance(true);
-            getBalance();
-          }}
-        />
-      </Center>
-
-      <Box mb={16}>
-        <Divider />
-      </Box>
-
-      <Stack
-        isInline={true}
-        spacing={1}
-        justifyContent="center"
-        opacity={0.5}
-        fontSize="sm"
-      >
-        <Text>Built with</Text>
+    <Box
+      py={{ base: '0.5rem', md: '3rem' }}
+      bgGradient={[
+        'linear(to-b, orange.100, purple.300)',
+        'linear(to-t, blue.200, teal.500)',
+        'linear(to-tr, teal.300, yellow.400)',
+      ]}
+      mx={'auto'}
+      px={10}
+      minH={'100vh'}
+    >
+      <Flex flexDirection='row' alignItems="flex-center" justifyContent= 'space-around' flex={1} w={'full'} marginBottom={10}>
         <Link
-          href="https://cosmology.tech/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Cosmology
-        </Link>
-      </Stack>
-    </Container>
+          w="10%"
+          maxW="sm"
+          alignItems="center"
+          justifyContent="center"
+          pt='2'
+          fontSize={'xl'}
+          fontWeight={'500'}
+          color={'#fff'}
+          onClick={()=>{setStep(1)}}
+        >Home</Link>
+        <Link
+          w="10%"
+          maxW="sm"
+          alignItems="center"
+          justifyContent="center"
+          pt='2'
+          fontSize={'xl'}
+          fontWeight={'500'}
+          color={'#fff'}
+          onClick={()=>{setStep(2)}}
+        >Create</Link>
+        <Link
+          w="10%"
+          maxW="sm"
+          alignItems="center"
+          justifyContent="center"
+          pt='2'
+          fontSize={'xl'}
+          fontWeight={'500'}
+          color={'#fff'}
+          onClick={()=>{setStep(3)}}
+        >Creators</Link>
+        <Link
+          w="10%"
+          maxW="sm"
+          alignItems="center"
+          justifyContent="center"
+          pt='2'
+          fontSize={'xl'}
+          fontWeight={'500'}
+          color={'#fff'}
+          onClick={()=>{setStep(4)}}
+        >Profile</Link>
+        <WalletSection />
+      </Flex>
+
+      <Flex flexDirection='row' alignItems="flex-center" justifyContent= 'space-around' w={'full'}>
+        { 
+          step===1 && (
+            <Grid templateColumns='repeat(4, 1fr)' gap={6} w={'full'}>
+              {blogs?.map((item)=>(
+                <GridItem w='100%' h='sm' display={'flex'} bgGradient='linear(to-t, green.100, pink.500)' borderRadius={'20'} p={4} flex={1} flexDirection={'column'}>
+                  <Text 
+                    fontSize={'md'}
+                    fontWeight={'700'}
+                    pb={2}
+                    color={'#fff'}
+                    textAlign={'center'}
+                  >{item.title}</Text>
+                  <Flex alignItems="flex-center" justifyContent= 'space-around'>
+                    <Box
+                    w={8}
+                    h={8}
+                    borderRadius={'50%'}
+                    bg={'#fff'}
+                    dangerouslySetInnerHTML={{
+                      __html: identicon(
+                        item?.creator ?? '',
+                        90,
+                        50
+                      )
+                    }}
+                  />
+                  <Text marginLeft={1} pt={1} color={'#fff'} opacity={0.7}>{stringTruncateFromCenter(item?.creator ?? '', 12)}</Text>
+                  <Button h={6} mt={1}>Follow</Button>
+                  </Flex>
+                  <Text paddingTop={3} color={'#fff'} opacity={0.9}>
+                    {item.body}
+                  </Text>
+                  <Box display={'flex'} alignItems={'flex-end'} justifyContent={'flex-end'} flex={1} alignSelf={'end'} columnGap={3}>
+                    <StarIcon boxSize={6} color={'pink'}/>
+                    <ChatIcon boxSize={6} color={'pink'}/>
+                  </Box>
+                </GridItem>
+              ))}
+            </Grid>
+          )
+        }
+        { 
+          step===2 && (
+            <Flex alignItems={'center'} justifyContent={'center'} flexDir={'column'} w={'full'}>
+              { 
+                success===true && ( 
+                  <Alert status='success'>
+                    <AlertIcon />
+                    <AlertTitle>Transaction sent</AlertTitle>
+                    <AlertDescription>Please wait for the chain to post your blog</AlertDescription>
+                    <CloseButton
+                      alignSelf='flex-start'
+                      position='relative'
+                      right={-1}
+                      top={-1}
+                      onClick={()=>{setsuccess(false)}}
+                    />
+                  </Alert>
+                )
+              }
+              <Text 
+                fontSize={'2xl'}
+                fontWeight={'500'}
+                pb={2}
+                color={'#fff'}>
+                Create a post
+              </Text>
+              <Input placeholder='Enter the title'  _placeholder={{ color: 'inherit' }} marginBottom={3} w={'50%'} onChange={handleTitleChange} borderWidth={2}/>
+              <Textarea placeholder='Enter the content'  _placeholder={{ color: 'inherit' }} marginBottom={3} w={'50%'} h={'xl'} onChange={handleContentChange} borderWidth={2}></Textarea>
+              <Button size={'md'} paddingX={10} onClick={()=>{onMsgCreatePostSend()}} isLoading={isPostLoading}>Submit</Button>
+            </Flex>
+          )
+        }
+        {step===3 &&(
+          <Grid templateColumns='repeat(3, 1fr)' gap={6}>
+            {accounts?.map((item, index)=>(
+              <GridItem display={'flex'} w='100%' h='auto' bg='blue.500' alignItems={'center'} p={3} borderRadius={'20'} flexDirection={'column'}>
+                  <Box
+                    w={8}
+                    h={8}
+                    mb={2}
+                    borderRadius={'50%'}
+                    bg={'#fff'}
+                    dangerouslySetInnerHTML={{
+                      __html: identicon(
+                        item,
+                        90,
+                        50
+                      )
+                    }}
+                  />
+                <Text color={'#fff'} opacity={0.9} textAlign={'center'} fontWeight={'600'} fontSize={'xl'}>User {index}</Text>
+                <Text color={'#fff'} opacity={0.7}>{item}</Text>
+                <Flex flex={1} w={'full'} justifyContent={'space-around'} p={2}>
+                    <Text color={'#fff'} fontWeight={'600'}>Followers: {randomInteger(accounts.length)}</Text>
+                    <Text color={'#fff'} fontWeight={'600'}>Followings: {randomInteger(accounts.length)}</Text>
+                </Flex>
+                <Flex flex={1} w={'full'} justifyContent={'center'} p={2}>
+                    <Button h={7} mx={2}>Blogs</Button>
+                    <Button h={7} mx={2}>Profile</Button>
+                    <Button h={7} mx={2}>Follow</Button>
+                </Flex>
+                
+              </GridItem>
+          ))}
+        </Grid>
+        )
+        }
+        {step ===4 && (
+          <Flex flexDir={'column'}>
+            <Text color={'#fff'} fontSize={'xl'} mb={5}>
+              Hi, {address}
+            </Text>
+            <SendTokensCard
+              isConnectWallet={walletStatus === WalletStatus.Connected}
+              balance={balance.toNumber()}
+              isFetchingBalance={isFetchingBalance}
+              response={resp}
+              sendTokensButtonText="Send Tokens"
+              handleClickSendTokens={sendTokens(
+                getSigningStargateClient as () => Promise<SigningStargateClient>,
+                setResp as () => any,
+                address as string
+              )}
+              handleClickGetBalance={() => {
+                setFetchingBalance(true);
+                getBalance();
+              }}
+            />
+            <Text color={'#fff'} fontSize={'xl'} mt={5}>Your blogs</Text>
+            {blogs?.map((item)=>(
+              item.creator===address && (
+                <GridItem w='100%' h='auto' display={'flex'} bgGradient='linear(to-t, green.100, pink.500)' borderRadius={'20'} p={4} flex={1} flexDirection={'column'} marginY={2}>
+                  <Text 
+                    fontSize={'md'}
+                    fontWeight={'700'}
+                    pb={2}
+                    color={'#fff'}
+                    textAlign={'center'}
+                  >{item.title}</Text>
+                  <Flex alignItems="flex-center" justifyContent= 'space-around'>
+                    <Box
+                    w={8}
+                    h={8}
+                    borderRadius={'50%'}
+                    bg={'#fff'}
+                    dangerouslySetInnerHTML={{
+                      __html: identicon(
+                        item?.creator ?? '',
+                        90,
+                        50
+                      )
+                    }}
+                  />
+                  <Text marginLeft={1} pt={1} color={'#fff'} opacity={0.7}>{item?.creator ?? ''}</Text>
+                  </Flex>
+                  <Text paddingTop={3} color={'#fff'} opacity={0.9}>
+                    {item.body}
+                  </Text>
+                </GridItem>)
+              ))}
+          </Flex>
+        )      
+      }
+
+      </Flex>
+    </Box>
   );
 }

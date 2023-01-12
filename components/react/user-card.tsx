@@ -8,23 +8,24 @@ export const ConnectedUserInfo = ({
   icon
 }: ConnectedUserCardType) => {
   return (
-    <Stack spacing={1} alignItems="center">
+    <Stack spacing={1} alignItems="center" flexDirection='row'>
       {username && (
         <>
           <Box
             display={icon ? 'block' : 'none'}
-            minW={20}
+            minW={10}
             maxW={20}
-            w={20}
-            minH={20}
+            w={10}
+            minH={10}
             maxH={20}
-            h={20}
+            h={10}
+            mx={2}
             borderRadius="full"
             overflow="hidden"
           >
             {icon}
           </Box>
-          <Text fontSize={{ md: 'xl' }} fontWeight="semibold">
+          <Text fontSize={{ md: 'l' }} fontWeight="semibold" pr={3}>
             {username}
           </Text>
         </>

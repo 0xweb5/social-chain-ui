@@ -12,18 +12,23 @@ import {
   osmosisAminoConverters,
   osmosisProtoRegistry
 } from 'osmojs';
+import { MsgCreatePost, MsgFollowCreator } from '../proto/post/types';
 
 export const chainName = 'blog';
-// export const chainName = 'osmosistestnet';
 
-const localosmosis: Chain = {
+const socialChain: Chain = {
   chain_name: 'blog',
   chain_id: 'blog',
   bech32_prefix: 'blog',
   status: 'live',
   network_type: 'testnet',
-  pretty_name: 'Blog',
+  pretty_name: 'blog',
   slip44: 118,
+  fees: {
+    fee_tokens: [
+      { denom: 'token' }
+    ]
+  },
   apis: {
     rpc: [
       {
@@ -35,10 +40,10 @@ const localosmosis: Chain = {
         address: 'http://47.242.123.146:1317'
       }
     ]
-  }
+  },
 };
 
-const localosmosisAssets: AssetList = {
+const socialChainAssets: AssetList = {
   chain_name: 'blog',
   assets: [
     {
@@ -56,8 +61,8 @@ const localosmosisAssets: AssetList = {
   ],
 };
 
-export const chainList = [...chains, localosmosis];
-export const assetLists = [...assets, localosmosisAssets];
+export const chainList = [...chains, socialChain];
+export const assetLists = [...assets, socialChainAssets];
   
 export const chainassets: AssetList = assetLists.find(
   (chain) => chain.chain_name === chainName
@@ -71,7 +76,9 @@ const protoRegistry: ReadonlyArray<[string, GeneratedType]> = [
   ...cosmosProtoRegistry,
   ...cosmwasmProtoRegistry,
   ...ibcProtoRegistry,
-  ...osmosisProtoRegistry
+  ...osmosisProtoRegistry,
+  ["/blog.blog.MsgCreatePost", MsgCreatePost],
+  ["/blog.blog.MsgFollowCreator", MsgFollowCreator],
 ];
 
 const aminoConverters = {
